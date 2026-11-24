@@ -1,0 +1,59 @@
+{
+  "name": "dsh-second-thoughts",
+  "version": "0.1.0",
+  "description": "Preflight gate for DeepSeek Harness: before an agent builds anything, it inventories its own tools, scans GitHub / plugin markets / the web for prior art, must show evidence, and must answer three self-challenge questions — adopt, contribute, or (with evidence) build. · 三思而后行：让 agent 开工前先盘点工具、扫市场、摆证据、自我反驳。",
+  "type": "module",
+  "main": "index.js",
+  "exports": {
+    ".": "./index.js",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "index.js",
+    "lib",
+    "cordis.patch.yml",
+    "skills",
+    "docs",
+    "README.md",
+    "LICENSE"
+  ],
+  "meta": {
+    "title": "三思而后行",
+    "description": "开工前强制预检：盘点检索工具 → 扫开源与插件市场 → 摆出已有方案证据 → 三问自我反驳 → 再决定「直接用 / 去贡献 / 自建」。"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "keywords": [
+    "dsh",
+    "dsh-plugin",
+    "deepseek-harness",
+    "prior-art",
+    "research",
+    "workflow",
+    "preflight",
+    "agent",
+    "cordis"
+  ],
+  "author": {
+    "name": "<YOUR NAME>",
+    "email": "3096526038@qq.com"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/<GITHUB_USER>/dsh-second-thoughts#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/<GITHUB_USER>/dsh-second-thoughts.git"
+  },
+  "bugs": {
+    "url": "https://github.com/<GITHUB_USER>/dsh-second-thoughts/issues"
+  },
+  "scripts": {
+    "test": "node --test test/*.test.mjs"
+  }
+}

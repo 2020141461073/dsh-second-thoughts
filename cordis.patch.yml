@@ -1,0 +1,16 @@
+# dsh-second-thoughts bundle patch.
+#
+# 一个 Host 行：注册 `agent/pre-step` 监听器，在新指令的第一步注入恰好一条
+# 「开工前预检」提示。不注册任何客户端组件——提示走正常对话记录。
+#
+# 可选的 profile 层配置（后面的层覆盖前面的）：
+#   - id: dsh-second-thoughts
+#     config:
+#       mode: brief            # brief | strict | off
+#       locale: zh             # zh | en
+#       minChars: 6            # 太短的指令（「继续」「好」）不触发
+#       extraKeywords: []      # 追加触发词
+#       skipSlashCommands: true
+- insert:
+    - id: dsh-second-thoughts
+      name: 'dsh-second-thoughts'
