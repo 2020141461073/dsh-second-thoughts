@@ -58,21 +58,23 @@
 
 ## 安装
 
-```bash
-# 推荐：按 DSH 官方 CLI 形式安装
-dsh plugin --profile web add dsh-second-thoughts
+**从 GitHub 源码安装**（目前唯一已发布的渠道）：
 
-# 从源码装（未发布 npm 时）
+```bash
 dsh plugin --profile web add github:2020141461073/dsh-second-thoughts
 ```
 
-在 DSH 界面里也可以走 `plugin_manager install_bundle → dsh-second-thoughts`。
+在你的 DSH 里也可以直接说：`帮我装 github:2020141461073/dsh-second-thoughts`。
 
-装完重启 DSH。日志里应出现：
+装完重启 DSH，日志里应出现：
 
 ```
 [second-thoughts] armed (mode=brief, locale=zh)
 ```
+
+> npm 包（`dsh-second-thoughts`）暂未发布：npm 注册被风控拦住了。
+> 发布之后会增加 `dsh plugin --profile web add dsh-second-thoughts` 这条更短的命令，
+> 并出现在 DSH 内置插件中心。源码安装不受影响，且能拿到最新提交。
 
 ---
 
