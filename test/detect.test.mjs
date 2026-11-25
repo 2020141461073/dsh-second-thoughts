@@ -39,6 +39,16 @@ test('triggers when the user literally asks about the market', () => {
   const cfg = resolveConfig()
   assert.equal(shouldTrigger('市面上有没有类似的现成插件', cfg), true)
   assert.equal(shouldTrigger('这个开源项目靠谱吗', cfg), true)
+  assert.equal(shouldTrigger('推荐一个能用的插件', cfg), true)
+  assert.equal(shouldTrigger('这些方案对比一下', cfg), true)
+})
+
+test('neutral words alone do not trigger (live false positive)', () => {
+  const cfg = resolveConfig()
+  // 真实误触发：「你先自己给自己把这个插件装上」
+  assert.equal(shouldTrigger('做完了吗，你先自己给自己把这个插件装上', cfg), false)
+  assert.equal(shouldTrigger('把这个工具装一下', cfg), false)
+  assert.equal(shouldTrigger('这个方案我看过了', cfg), false)
 })
 
 test('stays silent for short follow-ups, slash commands and plain questions', () => {

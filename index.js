@@ -56,7 +56,7 @@ const DEFAULTS = {
 /** Verbs that mean "the user is asking for something to be built or chosen". */
 const ZH_INTENT = [
   '做一', '做个', '开发', '实现', '设计', '搭建', '写一', '写个', '搞一', '搞个',
-  '选型', '方案', '架构', '重构', '移植', '改造', '集成', '能不能做', '可行',
+  '选型', '架构', '重构', '移植', '改造', '集成', '能不能做', '可行',
 ]
 
 const EN_INTENT = [
@@ -65,7 +65,14 @@ const EN_INTENT = [
 ]
 
 /** Phrases that are literally a request to check the market. */
-const MARKET_HINT = ['开源', '现成', '有没有', '类似', '插件', '轮子', '别人做过', '现有方案']
+const MARKET_HINT = ['开源', '现成', '有没有', '类似', '轮子', '别人做过', '现有方案']
+
+/**
+ * 中性词：单独出现太宽（「把这个插件装上」不该触发），
+ * 只有同时出现市场语境词时才视为「在问市场」。
+ */
+const PAIR_TERMS = ['插件', '工具', '方案', '库', '框架', '轮子']
+const PAIR_CONTEXT = ['有没有', '现成', '类似', '别人', '市场', '推荐', '哪个', '替代', '对比']
 
 /** Resolve user config into a complete, validated shape. */
 export function resolveConfig(raw) {
@@ -126,7 +133,12 @@ export function shouldTrigger(text, config = DEFAULTS) {
     ...MARKET_HINT,
     ...(config.extraKeywords ?? []),
   ]
-  return keywords.some((keyword) => haystack.includes(String(keyword).toLowerCase()))
+  if (keywords.some((keyword) => haystack.includes(String(keyword).toLowerCase()))) return true
+
+  // 「插件/工具/方案」这类中性词，必须搭配市场语境才算在问市场
+  const hasNeutral = PAIR_TERMS.some((term) => haystack.includes(term.toLowerCase()))
+  if (!hasNeutral) return false
+  return PAIR_CONTEXT.some((context) => haystack.includes(context.toLowerCase()))
 }
 
 const NOTICE_ZH = (strict) => `【三思而后行 · 开工前预检】
