@@ -94,16 +94,22 @@ test('lastUserInstruction returns undefined when only our notice is present', ()
   assert.equal(lastUserInstruction(messages), undefined)
 })
 
-test('notice carries the four steps and the funnel', () => {
+test('notice carries the five steps and the funnel', () => {
   const zh = composeNotice(resolveConfig())
-  for (const marker of ['盘点工具', '扫市场', '摆证据', '自我反驳', '判定漏斗']) {
+  for (const marker of ['盘点通道', '拆要素', '五路覆盖', '摆对照表', '残余风险', '判定漏斗']) {
     assert.ok(zh.includes(marker), `notice should mention ${marker}`)
   }
+  // v0.2 必须指向已有的成熟工具，而不是自己另造
+  assert.ok(zh.includes('dsh-plugin-verify'))
+  assert.ok(zh.includes('dsh-fact-check'))
+  // 必须禁止把「没找到」写成「不存在」
+  assert.ok(zh.includes('我没找到'))
   const strict = composeNotice(resolveConfig({ mode: 'strict' }))
   assert.ok(strict.includes('硬门'))
   const en = composeNotice(resolveConfig({ locale: 'en' }))
-  assert.ok(en.includes('Inventory your tools'))
-  assert.ok(en.includes('Challenge yourself'))
+  assert.ok(en.includes('Inventory channels'))
+  assert.ok(en.includes('Decompose into capability elements'))
+  assert.ok(en.includes('five channels'))
 })
 
 test('fallback message is frozen and self-tagged', () => {

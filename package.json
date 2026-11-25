@@ -1,60 +1,60 @@
 {
-  "name": "dsh-second-thoughts",
-  "version": "0.1.0",
-  "description": "开工前强制预检：盘点检索工具 → 扫开源与插件市场 → 摆证据表 → 三问自我反驳 → 再决定用现成的、去贡献，还是自建。A preflight gate for DeepSeek Harness agents: inventory tools, scan prior art, show evidence, challenge the plan.",
-  "type": "module",
-  "main": "index.js",
-  "exports": {
-    ".": "./index.js",
-    "./package.json": "./package.json"
-  },
-  "files": [
-    "index.js",
-    "lib",
-    "cordis.patch.yml",
-    "skills",
-    "docs",
-    "README.md",
-    "LICENSE"
-  ],
-  "meta": {
-    "title": "三思而后行",
-    "description": "开工前强制预检：盘点检索工具 → 扫开源与插件市场 → 摆证据 → 三问自我反驳 → 再决定用现成的还是自建。"
-  },
-  "dsh": {
-    "bundle": {
-      "patch": "./cordis.patch.yml"
-    }
-  },
-  "engines": {
-    "node": ">=22"
-  },
-  "keywords": [
-    "dsh",
-    "dsh-plugin",
-    "deepseek-harness",
-    "prior-art",
-    "research",
-    "workflow",
-    "preflight",
-    "agent",
-    "cordis"
-  ],
-  "author": {
-    "name": "2020141461073",
-    "email": "3096526038@qq.com",
-    "url": "https://github.com/2020141461073"
-  },
-  "license": "MIT",
-  "homepage": "https://github.com/2020141461073/dsh-second-thoughts#readme",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/2020141461073/dsh-second-thoughts.git"
-  },
-  "bugs": {
-    "url": "https://github.com/2020141461073/dsh-second-thoughts/issues"
-  },
-  "scripts": {
-    "test": "node --test test/*.test.mjs"
-  }
+    "name":  "dsh-second-thoughts",
+    "version":  "0.2.0",
+    "description":  "开工前强制预检 v0.2：盘点通道 → 拆要素 → 五路覆盖（仓库/代码/包/市场/社区）→ 摆对照表 → 声明残余风险 → 再决定用现成的、去贡献，还是自建。A preflight gate for DeepSeek Harness agents: decompose capabilities, cover five retrieval channels, show a hit/partial/miss matrix, declare residual risk, then decide adopt / contribute / build.",
+    "type":  "module",
+    "main":  "index.js",
+    "exports":  {
+                    ".":  "./index.js",
+                    "./package.json":  "./package.json"
+                },
+    "files":  [
+                  "index.js",
+                  "lib",
+                  "cordis.patch.yml",
+                  "skills",
+                  "docs",
+                  "README.md",
+                  "LICENSE"
+              ],
+    "meta":  {
+                 "title":  "三思而后行",
+                 "description":  "开工前强制预检：五路覆盖（仓库·代码·包·市场·社区），摆对照表并声明残余风险，再决定用现成的还是自建。"
+             },
+    "dsh":  {
+                "bundle":  {
+                               "patch":  "./cordis.patch.yml"
+                           }
+            },
+    "engines":  {
+                    "node":  "\u003e=22"
+                },
+    "keywords":  [
+                     "dsh",
+                     "dsh-plugin",
+                     "deepseek-harness",
+                     "prior-art",
+                     "research",
+                     "workflow",
+                     "preflight",
+                     "agent",
+                     "cordis"
+                 ],
+    "author":  {
+                   "name":  "2020141461073",
+                   "email":  "3096526038@qq.com",
+                   "url":  "https://github.com/2020141461073"
+               },
+    "license":  "MIT",
+    "homepage":  "https://github.com/2020141461073/dsh-second-thoughts#readme",
+    "repository":  {
+                       "type":  "git",
+                       "url":  "git+https://github.com/2020141461073/dsh-second-thoughts.git"
+                   },
+    "bugs":  {
+                 "url":  "https://github.com/2020141461073/dsh-second-thoughts/issues"
+             },
+    "scripts":  {
+                    "test":  "node --test test/*.test.mjs"
+                }
 }

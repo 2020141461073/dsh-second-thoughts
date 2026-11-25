@@ -102,6 +102,21 @@ dsh plugin --profile web add github:2020141461073/dsh-second-thoughts
 
 ---
 
+## 不重复造的东西
+
+这个插件的全部主张就是「先查有没有现成的」，所以它自己也不该重造。以下能力**已经有成熟实现，本插件直接指向它们，不重新发明**：
+
+| 能力 | 现成的 | 说明 |
+|---|---|---|
+| 证据验真（URL / npm / GitHub 探测、带行号引用） | [`dsh-plugin-verify`](https://www.npmjs.com/package/dsh-plugin-verify) | 校验引用真伪，别自己写抓取器 |
+| 专利先例检索 | [`@mtl-academic/dsh-patent`](https://www.npmjs.com/package/@mtl-academic/dsh-patent) | 动笔前检索专利、给三档结论 |
+| 事实核查 | [`dsh-fact-check`](https://www.npmjs.com/package/dsh-fact-check) | 先定型再取证 |
+| 文献综述方法学（PRISMA、引文追踪） | 现成 skills（如 `lit-review-agent`、`patent-prior-art`） | 学术场景直接复用，不要照搬 |
+
+**本插件只补一块空白**：工程场景下的「这个功能有没有人做过」——把要素分解、五路覆盖、对照表、残余风险声明固化成一道开工前的工序。
+
+> 方法学参照：专利检索的「要素分解 → claim chart」骨架（比学术 PRISMA 更贴合工程，因为工程没有引文图和受控词表），但**不照搬**——工程的判据是功能重合度而非新颖性，停止准则是成本与覆盖而非饱和。
+
 ## 设计取舍
 
 **为什么是 hook 不是 skill。**

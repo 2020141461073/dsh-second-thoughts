@@ -146,55 +146,59 @@ export function shouldTrigger(text, config = DEFAULTS) {
 
 const NOTICE_ZH = (strict) => `【三思而后行 · 开工前预检】
 
-这条指令看起来要开工（做 / 设计 / 选型 / 移植）。动手之前按顺序做完下面四步，并把**证据写进回复**：
+这条指令看起来要开工。动手前按顺序做完，并把证据写进回复：
 
-① **盘点工具**：先确认你手上真有哪些检索与核实手段（网页搜索、抓取、代码检索、仓库检索、包管理）。
-   不要假设，也不要轻信"某个工具坏了"——先跑一次自检再下结论。不可用的通道要明说，并给出替代路径。
+① **盘点通道**：列出此刻真能用的检索手段，逐条实测一次；坏掉的要明说并给替代路径。
+   已有工具优先用，别自己另造：证据验真用 \`dsh-plugin-verify\`，专利先例用 \`@mtl-academic/dsh-patent\`，事实核查用 \`dsh-fact-check\`。
 
-② **扫市场**：至少三路，逐路记录你查过什么：
-   · 开源代码与仓库（GitHub 等）——有没有人做过同样的东西；
-   · 本生态的插件/技能市场——有没有现成的；
-   · 通用网页与社区（含非官方来源、issue、讨论）——社区怎么评价、踩过什么坑。
+② **拆要素**：把需求拆成能力项（并发？持久化？离线？多端同步？权限模型？…），逐项去查。
+   按名字搜会漏——同类项目命名千奇百怪；按实现特征搜（代码检索）才抓得住。
 
-③ **摆证据**：把命中的东西列成表：名称 · 热度（星/下载）· 最近活跃时间 · 能力边界 · 与本次需求的重合度。
-   只用官方口径下结论不算证据；官方文档、营销页、聚合站要交叉验证。
+③ **五路覆盖**，逐路记下检索式与结果：
+   · 仓库搜索（GitHub 等，中英各搜一次）
+   · 代码检索（grep.app 一类，按函数名 / 协议名 / 架构词）
+   · 包注册表（npm / PyPI / 应用商店）
+   · 本生态的插件与技能市场
+   · 社区（Discussions / issue / HN / 博客 / 视频）—— 最多先例藏在这一层
 
-④ **自我反驳**：回答三问——
-   · 我的方案比现成的强在哪？说不出就承认重复；
-   · 如果只是重复，能不能直接用，或者去贡献而不是另起炉灶？
-   · 我漏掉了哪类来源？（社区、反例、已经失败的项目）
+④ **摆对照表**：每行一个能力项，每列一个候选，标「命中 / 部分 / 未命中」。
+   只看官方口径不算证据，官方文档、营销页、聚合站要交叉验证。
 
-**判定漏斗**：能直接用 → 用并说明理由；差一点 → 提 issue/PR 贡献；确实空白 → 自建，并写明"已检索、未找到"的具体范围。
+⑤ **声明覆盖与残余风险**：写清查了哪些入口、哪些层没覆盖。
+   QQ 群 / 微信群 / 公众号 / B站 这类基本不可检索，必须明说。
+   **禁止**把「我没找到」写成「不存在」。
 
-**禁止**：没做完第②步就宣布"没有现成方案"；拿"搜不到"当结论而不交代查了哪些源。${strict ? `
+**判定漏斗**：能直接用 → 用并说明理由；差一点 → 提 issue/PR 贡献；确实空白 → 自建，并附检索日志。${strict ? `
 
-【硬门】在给出上述证据之前，不要写入文件、不要执行会改变状态的命令；需要探索可以只读。` : ''}`
+【硬门】在给出上述证据之前，不要写入文件、不要执行会改变状态的命令；只读探索可以。` : ""}`
 
 const NOTICE_EN = (strict) => `[Second Thoughts · preflight before building]
 
-This instruction looks like a build / design / choose / port request. Before touching anything, run these four steps and put the evidence in your reply:
+This looks like a build / design / choose / port request. Do these in order and put the evidence in your reply:
 
-① Inventory your tools. Which search, fetch, code-search, repo-search and package tools do you actually have right now?
-   Do not assume, and do not trust a single "the search tool is broken" observation — self-test first, name the dead channels, and give an alternative path.
+① **Inventory channels.** List the search tools you actually have right now and self-test each one; name any dead channel and give a substitute.
+   Prefer tools that already exist over writing new ones: evidence verification → \`dsh-plugin-verify\`, patent prior art → \`@mtl-academic/dsh-patent\`, fact checking → \`dsh-fact-check\`.
 
-② Scan the market with at least three channels, and record what you queried:
-   · open-source code & repositories (GitHub etc.) — has someone already built this?
-   · this ecosystem's plugin/skill markets — is there a ready-made one?
-   · general web and community (including non-official sources, issues, discussions) — how do people rate it, what breaks?
+② **Decompose into capability elements** (concurrency? persistence? offline? multi-device sync? permissions? …) and search per element.
+   Name-based search misses things — competitors name themselves wildly. Search implementation traits (code search) instead.
 
-③ Show evidence in a table: name · traction (stars/downloads) · last activity · capability boundary · overlap with this request.
-   Vendor docs alone are not evidence. Cross-check official docs, marketing pages and aggregator sites.
+③ **Cover five channels**, recording the query and the result for each:
+   · repository search (GitHub etc., search in both English and Chinese)
+   · code search (grep.app and friends — by function name, protocol, architecture term)
+   · package registries (npm / PyPI / app stores)
+   · this ecosystem's plugin and skill markets
+   · community (Discussions / issues / HN / blogs / videos) — most prior art hides here
 
-④ Challenge yourself with three questions:
-   · Where is my approach better than what exists? If you cannot answer, it is duplication;
-   · If it is duplication, can we just use it, or contribute instead of rebuilding?
-   · Which source class did I skip? (community, counter-examples, projects that already failed)
+④ **Build a matrix**: one row per capability element, one column per candidate, marked hit / partial / miss.
+   Vendor docs alone are not evidence; cross-check docs, marketing pages and aggregators.
 
-Funnel: usable as-is → use it and say why; close but not enough → open an issue/PR; genuinely empty → build it, and state exactly where you looked and found nothing.
+⑤ **Declare coverage and residual risk**: say which channels you ran and which layers you did not cover.
+   QQ / WeChat groups, official accounts and video platforms are effectively unsearchable — say so.
+   **Never** write "nothing exists" when you mean "I did not find it".
 
-Forbidden: declaring "nothing exists" without step ②, and treating "I couldn't find it" as a conclusion without listing the sources you checked.${strict ? `
+Funnel: usable as-is → use it and say why; close → open an issue/PR; genuinely empty → build it, and attach the search log.${strict ? `
 
-[Hard gate] Until that evidence is in the reply, do not write files and do not run state-changing commands. Read-only exploration is fine.` : ''}`
+[Hard gate] Until that evidence is in the reply, do not write files and do not run state-changing commands. Read-only exploration is fine.` : ""}`
 
 /** Build the notice text for one instruction. */
 export function composeNotice(config) {
