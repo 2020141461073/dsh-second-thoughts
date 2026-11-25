@@ -59,20 +59,14 @@
 ## 安装
 
 ```bash
-# 装到当前 profile
-dsh plugin add dsh-second-thoughts
+# 推荐：按 DSH 官方 CLI 形式安装
+dsh plugin --profile web add dsh-second-thoughts
 
-# 或者在 DSH 里用 plugin_manager
-plugin_manager install_bundle → dsh-second-thoughts
+# 从源码装（未发布 npm 时）
+dsh plugin --profile web add github:2020141461073/dsh-second-thoughts
 ```
 
-本地开发时可以用链接方式：
-
-```yaml
-# <DSH_PROFILE_DIR>/package.json → dependencies
-"dsh-second-thoughts": "link:../dsh-second-thoughts"
-# 再把 "dsh-second-thoughts" 追加进 dsh.profile.bundles
-```
+在 DSH 界面里也可以走 `plugin_manager install_bundle → dsh-second-thoughts`。
 
 装完重启 DSH。日志里应出现：
 
