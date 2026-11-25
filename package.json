@@ -1,7 +1,7 @@
 {
   "name": "dsh-second-thoughts",
   "version": "0.1.0",
-  "description": "Preflight gate for DeepSeek Harness: before an agent builds anything, it inventories its own tools, scans GitHub / plugin markets / the web for prior art, must show evidence, and must answer three self-challenge questions — adopt, contribute, or (with evidence) build. · 三思而后行：让 agent 开工前先盘点工具、扫市场、摆证据、自我反驳。",
+  "description": "开工前强制预检：盘点检索工具 → 扫开源与插件市场 → 摆证据表 → 三问自我反驳 → 再决定用现成的、去贡献，还是自建。A preflight gate for DeepSeek Harness agents: inventory tools, scan prior art, show evidence, challenge the plan.",
   "type": "module",
   "main": "index.js",
   "exports": {
@@ -19,7 +19,7 @@
   ],
   "meta": {
     "title": "三思而后行",
-    "description": "开工前强制预检：盘点检索工具 → 扫开源与插件市场 → 摆出已有方案证据 → 三问自我反驳 → 再决定「直接用 / 去贡献 / 自建」。"
+    "description": "开工前强制预检：盘点检索工具 → 扫开源与插件市场 → 摆证据 → 三问自我反驳 → 再决定用现成的还是自建。"
   },
   "dsh": {
     "bundle": {

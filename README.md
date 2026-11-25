@@ -1,5 +1,10 @@
 # 三思而后行 · dsh-second-thoughts
 
+![license](https://img.shields.io/badge/license-MIT-green)
+![tests](https://img.shields.io/badge/tests-18%20passed-brightgreen)
+![dependencies](https://img.shields.io/badge/dependencies-0-blue)
+![node](https://img.shields.io/badge/node-%3E%3D22-informational)
+
 > 给 DeepSeek Harness（以及任何跑 DSH 的 agent）装的**开工前预检门**：
 > 动手之前，先盘点自己有什么检索工具、先看市面上有没有现成方案、先摆证据、先自我反驳一遍。
 
