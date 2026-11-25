@@ -41,17 +41,18 @@
     "cordis"
   ],
   "author": {
-    "name": "<YOUR NAME>",
-    "email": "3096526038@qq.com"
+    "name": "2020141461073",
+    "email": "3096526038@qq.com",
+    "url": "https://github.com/2020141461073"
   },
   "license": "MIT",
-  "homepage": "https://github.com/<GITHUB_USER>/dsh-second-thoughts#readme",
+  "homepage": "https://github.com/2020141461073/dsh-second-thoughts#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/<GITHUB_USER>/dsh-second-thoughts.git"
+    "url": "git+https://github.com/2020141461073/dsh-second-thoughts.git"
   },
   "bugs": {
-    "url": "https://github.com/<GITHUB_USER>/dsh-second-thoughts/issues"
+    "url": "https://github.com/2020141461073/dsh-second-thoughts/issues"
   },
   "scripts": {
     "test": "node --test test/*.test.mjs"
