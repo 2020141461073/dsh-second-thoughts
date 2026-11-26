@@ -199,29 +199,34 @@ export const CHITCHAT_PATTERNS = [
   /^(继续|好|好的|行|可以|嗯|嗯嗯|收到|明白|谢谢|多谢|辛苦了|ok|okay|yes|no|y|n)[\s。.!！?？]*$/i,
 ]
 
-const NOTICE_ZH = () => `【开工前，先问一句】
+const NOTICE_ZH = () => `【开工前分类 · 回答第一行先标注】
 
-这一步可能属于「执行前需要调查」——要不要自建、有没有现成的、方向还没定。
+先判断这条属于哪类，在回答**第一行**标注 \`[N]\` / \`[B1]\` / \`[B2]\` / \`[M]\`，再按对应做法执行：
 
-**先别动手，也别自己开查。** 先用一句话问用户：
+| 类 | 判据 | 做法 |
+|---|---|---|
+| **N 无关** | 纯问答、解释、改错字、继续之前的工作 | 不问不查，正常答 |
+| **B1 小改动** | 要我动手，且目标与标准都已说清（例：把这个函数改成 async） | 不问不查，直接做 |
+| **B2 待定开工** | 要我动手，但方向 / 标准 / 要不要自建没定 | **先用一句话问**要不要全面预检；同意 → 按 \`second-thoughts\` 四关走；拒绝 → 直接做，不啰嗦 |
+| **M 存在性** | 在问「有没有人做过 / 有没有现成的 / 值不值得自己造」 | **不用问**（提问已含同意），直接做召回，**结尾必须给「检索范围」** |
 
-> 这个我建议先做一轮预检（把需求写成验收句 + 查有没有现成方案），要走吗？
+**判不准 → 选 B2**（多问一句，比漏掉一个已有方案便宜）。
 
-- 用户同意 → 按 \`second-thoughts\` 技能的四关执行
-- 用户说不用 → 直接干，不要啰嗦
-- 你判断这步根本不属于这类（纯问答、改个错字、继续之前的工作）→ 忽略本条，正常做`
+注：M 类的检索范围要写清查了哪些源、哪些没覆盖（QQ群/微信群/公众号/B站基本不可检索），
+禁止把「我没找到」写成「不存在」。`
 
-const NOTICE_EN = () => `[Before starting, ask once]
+const NOTICE_EN = () => `[Classify first · label the first line]
 
-This step may be one that needs investigation first: build-or-adopt is unclear, or the direction is not settled.
+Decide which class this belongs to, put \`[N]\` / \`[B1]\` / \`[B2]\` / \`[M]\` on the first line of your reply, then act accordingly:
 
-**Do not start, and do not go researching on your own.** Ask the user one short question:
+| Class | Test | Action |
+|---|---|---|
+| **N** unrelated | plain Q&A, explanation, typo fix, resuming | no question, no research |
+| **B1** small change | you must act, and the goal plus standard are already clear | no question, just do it |
+| **B2** undecided build | you must act, but direction / standard / build-vs-adopt is open | **ask one line** about a preflight; yes → the four gates in \`second-thoughts\`; no → just do it |
+| **M** existence | the user asks whether this already exists / is worth building | **do not ask** (the question already implies consent); run recall and **end with a coverage statement** |
 
-> I'd suggest a preflight first (turn the ask into acceptance sentences + check whether this already exists). Want that?
-
-- User agrees → follow the four gates in the \`second-thoughts\` skill
-- User declines → just do it, no further ceremony
-- You judge this is not that kind of step (plain Q&A, typo fix, resume) → ignore this line`
+When unsure, pick **B2** — one extra question is cheaper than missing an existing project.`
 
 /** Build the notice text for one instruction. */
 export function composeNotice(config) {

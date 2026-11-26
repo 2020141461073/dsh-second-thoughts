@@ -30,7 +30,7 @@ test('injects exactly one preflight notice for a build instruction', async () =>
   const notice = out.messages[1]
   assert.equal(notice.role, 'user')
   assert.equal(notice.source.kind, 'second-thoughts')
-  assert.ok(notice.content[0].text.includes('先问一句'))
+  assert.ok(notice.content[0].text.includes('[B2]'))
   assert.ok(Object.isFrozen(notice))
   assert.equal(out.messages[0].id, 'u1', '原消息没有被改动')
 })

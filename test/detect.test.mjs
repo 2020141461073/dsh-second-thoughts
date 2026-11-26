@@ -94,17 +94,16 @@ test('lastUserInstruction skips the plugin own notice and picks the newest human
   assert.equal(hit.id, 'u2')
 })
 
-test('notice asks the user before investigating', () => {
+test('notice defines the four classes and requires a label', () => {
   const zh = composeNotice(resolveConfig())
-  for (const marker of ['先问一句', '先别动手', '要走吗', '用户同意', '用户说不用']) {
-    assert.ok(zh.includes(marker), `notice should mention ${marker}`)
+  for (const marker of ['[N]', '[B1]', '[B2]', '[M]', '第一行', '判不准 → 选 B2', '检索范围']) {
+    assert.ok(zh.includes(marker), 'notice should mention ' + marker)
   }
-  assert.ok(zh.includes('判断这步根本不属于'))
   assert.ok(!zh.includes('dsh-plugin-verify'))
 
   const en = composeNotice(resolveConfig({ locale: 'en' }))
-  assert.ok(en.includes('Ask the user'))
-  assert.ok(en.includes('User declines'))
+  assert.ok(en.includes('[B2]'))
+  assert.ok(en.includes('coverage statement'))
 })
 
 test('fallback message is frozen and self-tagged', () => {
