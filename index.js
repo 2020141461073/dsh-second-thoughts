@@ -67,7 +67,7 @@ const DEFAULTS = {
   /** Notice language: `zh` | `en`. */
   locale: 'zh',
   /** Instructions shorter than this never trigger ("继续", "好", "ok"). */
-  minChars: 6,
+  minChars: 4,
   /** Extra trigger words, appended to the built-in intent lists. */
   extraKeywords: [],
   /** Slash commands carry their own behaviour. */
@@ -94,15 +94,20 @@ export const REQUEST_PATTERNS = [
   /\bcan you (build|implement|create|make|write)\b/i,
 ]
 
-/** ② 明确在问市面情况 / 要不要自己造。 */
+/** ② 明确在问市面情况 / 要不要自己造。中文词序多变，用「短距离容忍」而不是死板词表。 */
 export const MARKET_PATTERNS = [
-  /有没有(现成|人做过|已经做|类似的|开源的|别人写过)/,
-  /市面(上|面)(有没有|有吗)|市面上/,
+  // 「有没有…做过/实现过/现成」：中间允许插入「人已经」这类词，最多 10 个字
+  /有没有[\s\S]{0,10}(做过|实现过|写过|现成|开源实现|类似的)/,
+  // 「有人/别人/谁…做过」
+  /(有人|别人|谁|哪家)[\s\S]{0,10}(做过|实现过|写过)/,
+  // 「已经做过/已经实现」
+  /已经[\s\S]{0,6}(做过|实现过)/,
+  /(是不是|会不会)[\s\S]{0,6}(有人|别人)?[\s\S]{0,4}(做过|实现过)/,
+  /市面(上|面)/,
   /(有|存在)(没有)?(现成|成熟)的?(方案|实现|工具)/,
   /值不值得(做|自己写|重写)/,
   /要(不要|不该)自己(做|写|造|实现)/,
-  /(是不是|会不会)(已经)?有人做过/,
-  /重复造轮子/,
+  /重复造轮子|造轮子/,
   /\bhas (anyone|someone) (already )?(built|done|made)\b/i,
   /\bdoes .{0,30}already exist\b/i,
   /\bshould i (build|write|make) (it|this|one)\b/i,
@@ -178,18 +183,21 @@ export function shouldTrigger(text, config = DEFAULTS) {
   if (!instruction) return false
   if (config.skipSlashCommands && instruction.startsWith('/')) return false
   if (instruction.length < (config.minChars ?? DEFAULTS.minChars)) return false
-  if (isDiscussion(instruction)) return false
 
-  // 这一步只是「候选识别」，不是判决：
-  // 命中就注入一句「先问用户要不要全面预检」，真正判断交给模型。
-  if (REQUEST_PATTERNS.some((re) => re.test(instruction))) return true
-  if (MARKET_PATTERNS.some((re) => re.test(instruction))) return true
-  if (HOWTO_PATTERNS.some((re) => re.test(instruction))) return true
+  // 初筛刻意做宽：后面还有模型判断 + 用户确认两道关，
+  // 「多问一句」的成本远低于「漏掉一个已经存在的方案」。
+  // 只排除明显不是的：寒暄、确认、以及用户自己加的排除词。
+  if (CHITCHAT_PATTERNS.some((re) => re.test(instruction))) return false
 
   const extra = config.extraKeywords ?? []
-  return extra.some((keyword) => instruction.includes(String(keyword)))
+  return extra.every((keyword) => !instruction.includes(String(keyword)))
 }
 
+/** 明显不是「要开工」的短句：寒暄、确认、道谢。 */
+export const CHITCHAT_PATTERNS = [
+  /^[\s\S]{0,4}$/,
+  /^(继续|好|好的|行|可以|嗯|嗯嗯|收到|明白|谢谢|多谢|辛苦了|ok|okay|yes|no|y|n)[\s。.!！?？]*$/i,
+]
 
 const NOTICE_ZH = () => `【开工前，先问一句】
 
