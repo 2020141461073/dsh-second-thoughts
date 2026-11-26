@@ -180,69 +180,40 @@ export function shouldTrigger(text, config = DEFAULTS) {
   if (instruction.length < (config.minChars ?? DEFAULTS.minChars)) return false
   if (isDiscussion(instruction)) return false
 
-  // 只有三种情形值得拦：① 明确要我动手做 ② 明确在问有没有现成的 ③ 明确在问怎么做
+  // 这一步只是「候选识别」，不是判决：
+  // 命中就注入一句「先问用户要不要全面预检」，真正判断交给模型。
   if (REQUEST_PATTERNS.some((re) => re.test(instruction))) return true
   if (MARKET_PATTERNS.some((re) => re.test(instruction))) return true
   if (HOWTO_PATTERNS.some((re) => re.test(instruction))) return true
 
-  // 用户自定义的追加触发词（逃生口）
   const extra = config.extraKeywords ?? []
   return extra.some((keyword) => instruction.includes(String(keyword)))
 }
 
-const NOTICE_ZH = (strict) => `【三思而后行 · 开工前预检】
 
-这条指令看起来要开工。动手前做完下面四件事，并把结果写进回复（细节见 skill \`second-thoughts\`）：
+const NOTICE_ZH = () => `【开工前，先问一句】
 
-① **把话说明白**：用户说得含糊，不等于可以随便做。把需求改写成验收句
-   ——「当 <触发> 时，应该 <可观察行为>」，并标明哪些默认值是我替他定的。
-   同时判定档位：一次性脚本 / 长期工具 / 给别人用的产品 / 工业系统。
-   **档位由事情本身决定，不由用户说话的专业程度决定。**
+这一步可能属于「执行前需要调查」——要不要自建、有没有现成的、方向还没定。
 
-② **自己找源并验证**：不要用固定清单。按这个领域列出候选源（含长尾和新平台），
-   每个源拿一个**已知存在的项目**试搜一次——搜不到就标记为不可靠并换掉。
-   只报告验证过能用的源；本次新增/失效的源要说出来。
+**先别动手，也别自己开查。** 先用一句话问用户：
 
-③ **召回直到没有新东西**：把需求拆成能力项，按能力搜而不是按名字搜；
-   找到一个同类后顺着它爬（dependents / alternatives / issue 里提到的竞品 / 反向检索）。
-   **连续 2 轮没有新候选才停。**
+> 这个我建议先做一轮预检（把需求写成验收句 + 查有没有现成方案），要走吗？
 
-④ **对照表 + 覆盖声明**：每行一个能力项、每列一个候选，标命中/部分/未命中；
-   写清查了哪些源、哪些没覆盖（QQ群/微信群/公众号/B站基本不可检索）。
-   **禁止把「我没找到」写成「不存在」。**
+- 用户同意 → 按 \`second-thoughts\` 技能的四关执行
+- 用户说不用 → 直接干，不要啰嗦
+- 你判断这步根本不属于这类（纯问答、改个错字、继续之前的工作）→ 忽略本条，正常做`
 
-**判定漏斗**：能直接用 → 用并说明理由；差一点 → 提 issue/PR；确实空白 → 自建，附检索日志。
+const NOTICE_EN = () => `[Before starting, ask once]
 
-**交付时**：逐条对照①②里的验收句，标 达成 / 部分 / 未达成——未达成必须明写，不许用「后续可优化」包装成完成。
-${strict ? `
-【硬门】在给出上述证据之前，不要写入文件、不要执行会改变状态的命令；只读探索可以。` : ""}`
+This step may be one that needs investigation first: build-or-adopt is unclear, or the direction is not settled.
 
-const NOTICE_EN = (strict) => `[Second Thoughts · preflight before building]
+**Do not start, and do not go researching on your own.** Ask the user one short question:
 
-This looks like a build / design / choose / port request. Do these four things before touching anything, and put the results in your reply (details in the \`second-thoughts\` skill):
+> I'd suggest a preflight first (turn the ask into acceptance sentences + check whether this already exists). Want that?
 
-① **Make the ask concrete.** A vague request is not permission to lower the bar. Rewrite it as acceptance sentences
-   — "When <trigger>, the system shall <observable behaviour>" — and state which defaults you chose on the user's behalf.
-   Also pick the tier: throwaway script / long-lived tool / product for others / industrial system.
-   **The tier follows what the thing is for, not how technical the user sounds.**
-
-② **Find and verify your own sources.** No fixed list. Enumerate candidate sources for this domain (including long-tail and new platforms),
-   then probe each with a project you know exists — if it cannot find that, mark the source unreliable and replace it.
-   Only report sources you verified; announce sources added or found dead.
-
-③ **Recall until nothing new appears.** Decompose the request into capability elements and search by capability, not by name;
-   once you find one comparable project, crawl outward (dependents / alternatives / competitors named in issues / reverse search).
-   **Stop only after two consecutive rounds with no new candidates.**
-
-④ **Matrix + coverage statement.** One row per capability, one column per candidate, marked hit/partial/miss;
-   state which sources you ran and which layers you did not cover.
-   **Never** write "nothing exists" when you mean "I did not find it".
-
-Funnel: usable → adopt and say why; close → open an issue/PR; genuinely empty → build, with the search log attached.
-
-**On delivery:** check every acceptance sentence from ① and mark met / partial / not met — unmet must be stated, never dressed up as done.${strict ? `
-
-[Hard gate] Until that evidence is in the reply, do not write files and do not run state-changing commands. Read-only exploration is fine.` : ""}`
+- User agrees → follow the four gates in the \`second-thoughts\` skill
+- User declines → just do it, no further ceremony
+- You judge this is not that kind of step (plain Q&A, typo fix, resume) → ignore this line`
 
 /** Build the notice text for one instruction. */
 export function composeNotice(config) {

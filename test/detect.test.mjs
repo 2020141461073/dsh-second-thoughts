@@ -108,21 +108,20 @@ test('lastUserInstruction skips the plugin own notice and picks the newest human
   assert.equal(hit.text, '顺便加个配置项')
 })
 
-test('notice carries the four gates and the funnel', () => {
+test('notice asks the user before investigating', () => {
   const zh = composeNotice(resolveConfig())
-  for (const marker of ['把话说明白', '自己找源并验证', '召回直到没有新东西', '覆盖声明', '判定漏斗']) {
+  for (const marker of ['先问一句', '先别动手', '要走吗', '用户同意', '用户说不用']) {
     assert.ok(zh.includes(marker), `notice should mention ${marker}`)
   }
-  assert.ok(zh.includes('已知存在的项目'))
-  assert.ok(zh.includes('连续 2 轮'))
-  assert.ok(zh.includes('我没找到'))
+  // 判断权在模型：必须允许它认定「这步不属于这类」
+  assert.ok(zh.includes('判断这步根本不属于'))
+  // 四关下沉到 skill，提示里不再复述
+  assert.ok(!zh.includes('盘点通道'))
   assert.ok(!zh.includes('dsh-plugin-verify'))
-  assert.ok(!zh.includes('dsh-fact-check'))
-  const strict = composeNotice(resolveConfig({ mode: 'strict' }))
-  assert.ok(strict.includes('硬门'))
+
   const en = composeNotice(resolveConfig({ locale: 'en' }))
-  assert.ok(en.includes('Find and verify your own sources'))
-  assert.ok(en.includes('Recall until nothing new'))
+  assert.ok(en.includes('Ask the user'))
+  assert.ok(en.includes('User declines'))
 })
 
 test('fallback message is frozen and self-tagged', () => {
