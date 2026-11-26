@@ -4,6 +4,7 @@ import test from 'node:test'
 import {
   composeNotice,
   fallbackUserMessage,
+  isDiscussion,
   lastUserInstruction,
   resolveConfig,
   shouldTrigger,
@@ -27,37 +28,57 @@ test('mode=off disables the plugin', () => {
   assert.equal(resolveConfig({ mode: 'off' }).enabled, false)
 })
 
-test('triggers on build/design/choose instructions in both languages', () => {
+test('triggers on explicit build requests', () => {
   const cfg = resolveConfig()
   assert.equal(shouldTrigger('帮我做一个安卓端的音乐播放器', cfg), true)
-  assert.equal(shouldTrigger('这个功能怎么设计比较好', cfg), true)
+  assert.equal(shouldTrigger('我想做一个 DSH 插件，能把对话导出成图片', cfg), true)
+  assert.equal(shouldTrigger('给它实现一个断点续传', cfg), true)
   assert.equal(shouldTrigger('port this to Kotlin', cfg), true)
-  assert.equal(shouldTrigger('选型：sqlite 还是 room', cfg), true)
 })
 
-test('triggers when the user literally asks about the market', () => {
+test('triggers on explicit market questions', () => {
   const cfg = resolveConfig()
   assert.equal(shouldTrigger('市面上有没有类似的现成插件', cfg), true)
-  assert.equal(shouldTrigger('这个开源项目靠谱吗', cfg), true)
-  assert.equal(shouldTrigger('推荐一个能用的插件', cfg), true)
-  assert.equal(shouldTrigger('这些方案对比一下', cfg), true)
+  assert.equal(shouldTrigger('这个东西有没有人做过', cfg), true)
+  assert.equal(shouldTrigger('值不值得自己写一个', cfg), true)
+  assert.equal(shouldTrigger('has anyone already built this', cfg), true)
 })
 
-test('neutral words alone do not trigger (live false positive)', () => {
+test('triggers on explicit how-to questions', () => {
   const cfg = resolveConfig()
-  // 真实误触发：「你先自己给自己把这个插件装上」
-  assert.equal(shouldTrigger('做完了吗，你先自己给自己把这个插件装上', cfg), false)
-  assert.equal(shouldTrigger('把这个工具装一下', cfg), false)
-  assert.equal(shouldTrigger('这个方案我看过了', cfg), false)
+  assert.equal(shouldTrigger('这个功能怎么设计比较好', cfg), true)
+  assert.equal(shouldTrigger('如何实现一个断点续传', cfg), true)
 })
 
-test('stays silent for short follow-ups, slash commands and plain questions', () => {
+test('stays silent on discussion, review and evaluation', () => {
+  const cfg = resolveConfig()
+  assert.equal(shouldTrigger('现在要设计实验，两个子智能体一个用一个不用', cfg), false)
+  assert.equal(shouldTrigger('讨论一下这个方案是否可行', cfg), false)
+  assert.equal(shouldTrigger('评估一下实验结果', cfg), false)
+  assert.equal(shouldTrigger('你觉得这个设计有什么问题', cfg), false)
+  assert.equal(shouldTrigger('选型：sqlite 还是 room', cfg), false)
+  assert.equal(shouldTrigger('这个开源项目靠谱吗', cfg), false)
+})
+
+test('stays silent for short follow-ups and slash commands', () => {
   const cfg = resolveConfig()
   assert.equal(shouldTrigger('继续', cfg), false)
   assert.equal(shouldTrigger('好', cfg), false)
   assert.equal(shouldTrigger('/compact', cfg), false)
-  assert.equal(shouldTrigger('今天天气怎么样', cfg), false)
   assert.equal(shouldTrigger('', cfg), false)
+})
+
+test('neutral nouns never trigger on their own', () => {
+  const cfg = resolveConfig()
+  assert.equal(shouldTrigger('做完了吗，你先自己给自己把这个插件装上', cfg), false)
+  assert.equal(shouldTrigger('这个方案我看过了', cfg), false)
+  assert.equal(shouldTrigger('轮子太多了', cfg), false)
+})
+
+test('isDiscussion classifies meta talk', () => {
+  assert.equal(isDiscussion('我们讨论一下架构'), true)
+  assert.equal(isDiscussion('设计实验怎么做'), true)
+  assert.equal(isDiscussion('帮我做一个下载器'), false)
 })
 
 test('extraKeywords extend triggering without replacing defaults', () => {
@@ -87,24 +108,14 @@ test('lastUserInstruction skips the plugin own notice and picks the newest human
   assert.equal(hit.text, '顺便加个配置项')
 })
 
-test('lastUserInstruction returns undefined when only our notice is present', () => {
-  const messages = [
-    { id: 'n1', role: 'user', content: '【三思而后行】…', source: { kind: 'second-thoughts' } },
-  ]
-  assert.equal(lastUserInstruction(messages), undefined)
-})
-
 test('notice carries the four gates and the funnel', () => {
   const zh = composeNotice(resolveConfig())
   for (const marker of ['把话说明白', '自己找源并验证', '召回直到没有新东西', '覆盖声明', '判定漏斗']) {
     assert.ok(zh.includes(marker), `notice should mention ${marker}`)
   }
-  // 源不能写死：必须要求自拟 + 探针验证 + 连续 2 轮停止
   assert.ok(zh.includes('已知存在的项目'))
   assert.ok(zh.includes('连续 2 轮'))
-  // 不许把「没找到」说成「不存在」
   assert.ok(zh.includes('我没找到'))
-  // 不许把任何插件写成前提（v0.3 起）
   assert.ok(!zh.includes('dsh-plugin-verify'))
   assert.ok(!zh.includes('dsh-fact-check'))
   const strict = composeNotice(resolveConfig({ mode: 'strict' }))

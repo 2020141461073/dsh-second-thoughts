@@ -1,6 +1,6 @@
 {
   "name": "dsh-second-thoughts",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "开工前预检 v0.4：把含糊需求写成可验收句 → 自己找源并用探针验证（0 结果换三组说法重搜）→ 按能力召回直到没有新候选 → 出对照表与覆盖声明 → 交付逐条对账。 A preflight gate for DeepSeek Harness agents: turn vague asks into acceptance sentences, discover and probe your own sources, retry with three alternative phrasings before concluding \"none exists\", recall by capability, then reconcile before delivery.",
   "type": "module",
   "main": "index.js",
@@ -19,7 +19,7 @@
   ],
   "meta": {
     "title": "三思而后行",
-    "description": "开工前预检 v0.4：验收句 → 自拟并验证检索源（0 结果换三组说法重搜）→ 按能力召回 → 覆盖声明 → 交付对账。"
+    "description": "开工前预检 v0.5：只在「明确要动手 / 明确问市面 / 明确问怎么做」时介入，讨论与评估不拦。"
   },
   "dsh": {
     "bundle": {

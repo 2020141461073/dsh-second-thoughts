@@ -74,29 +74,58 @@ const DEFAULTS = {
   skipSlashCommands: true,
 }
 
-/** Verbs that mean "the user is asking for something to be built or chosen". */
-export const ZH_INTENT = [
-  '做一', '做个', '开发', '实现', '设计', '搭建', '写一', '写个', '搞一', '搞个',
-  '选型', '架构', '重构', '移植', '改造', '集成', '能不能做', '可行',
+/**
+ * 触发条件只认两种「显式」意图。
+ *
+ * 之前的做法是匹配"做/设计/选型"这类词，结果任何讨论、评审、设计实验的句子都会被拦。
+ * 现在改为：只有**明确要我动手**，或**明确在问有没有现成的**才拦。
+ */
+
+/** ① 明确要我动手做。 */
+export const REQUEST_PATTERNS = [
+  // 中文：祈使 + 对象
+  /帮我(做|写|实现|开发|设计|搭|搞|改|移|弄)/,
+  /(给|替).{0,4}(做|写|实现|开发|搭|搞)/,
+  /(我)?(想|要|需要)(做|写|实现|开发|搭|搞)(一|个)/,
+  /(做|写|实现|开发|搭|搞)(一)?个.{0,12}(吧|呗|工具|插件|程序|脚本|系统|App|应用)/,
+  /实现一下|搭个架子|起个工程|开始写|动手做/,
+  // 英文：祈使
+  /\b(please\s+)?(build|implement|create|make|write|port|rewrite|scaffold)\s+(me\s+)?(an?|the|this)\b/i,
+  /\bcan you (build|implement|create|make|write)\b/i,
 ]
 
-export const EN_INTENT = [
-  'build', 'implement', 'create', 'design', 'architect', 'rewrite', 'port',
-  'migrate', 'integrate', 'scaffold', 'choose', 'compare', 'should i',
+/** ② 明确在问市面情况 / 要不要自己造。 */
+export const MARKET_PATTERNS = [
+  /有没有(现成|人做过|已经做|类似的|开源的|别人写过)/,
+  /市面(上|面)(有没有|有吗)|市面上/,
+  /(有|存在)(没有)?(现成|成熟)的?(方案|实现|工具)/,
+  /值不值得(做|自己写|重写)/,
+  /要(不要|不该)自己(做|写|造|实现)/,
+  /(是不是|会不会)(已经)?有人做过/,
+  /重复造轮子/,
+  /\bhas (anyone|someone) (already )?(built|done|made)\b/i,
+  /\bdoes .{0,30}already exist\b/i,
+  /\bshould i (build|write|make) (it|this|one)\b/i,
 ]
 
-/**
- * 明确在问市场的词。注意「轮子」不在这里：它自己也常出现在元讨论里
- * （「这是不是又重复造轮子」不是要开工），只作为 PAIR_TERMS 与语境词配对。
- */
-export const MARKET_HINT = ['开源', '现成', '有没有', '类似', '别人做过', '现有方案']
+/** ③ 明确在问「怎么做」。 */
+export const HOWTO_PATTERNS = [
+  /怎么(做|实现|设计|搭|选型|搞)/,
+  /如何(实现|设计|搭建)/,
+  /\bhow (should|do|would) i (build|implement|design|make)\b/i,
+]
 
-/**
- * 中性词：单独出现太宽（「把这个插件装上」不该触发），
- * 只有同时出现市场语境词时才视为「在问市场」。
- */
-export const PAIR_TERMS = ['插件', '工具', '方案', '库', '框架', '轮子']
-export const PAIR_CONTEXT = ['有没有', '现成', '类似', '别人', '市场', '推荐', '哪个', '替代', '对比']
+/** ④ 讨论 / 评审 / 复盘类，一律不拦。 */
+const DISCUSSION_PATTERNS = [
+  /讨论|评估|复盘|回顾|总结一下|分析一下|你怎么看|你觉得|为什么|是什么|区别|原理/,
+  /设计(一个|个)?实验|做实验|实验结果|实验设计/,
+  /^[\s\S]{0,20}(吗|呢|么)\?*$/,
+]
+
+export function isDiscussion(text) {
+  const s = String(text ?? '')
+  return DISCUSSION_PATTERNS.some((re) => re.test(s))
+}
 
 /** Resolve user config into a complete, validated shape. */
 export function resolveConfig(raw) {
@@ -149,20 +178,16 @@ export function shouldTrigger(text, config = DEFAULTS) {
   if (!instruction) return false
   if (config.skipSlashCommands && instruction.startsWith('/')) return false
   if (instruction.length < (config.minChars ?? DEFAULTS.minChars)) return false
+  if (isDiscussion(instruction)) return false
 
-  const haystack = instruction.toLowerCase()
-  const keywords = [
-    ...ZH_INTENT,
-    ...EN_INTENT,
-    ...MARKET_HINT,
-    ...(config.extraKeywords ?? []),
-  ]
-  if (keywords.some((keyword) => haystack.includes(String(keyword).toLowerCase()))) return true
+  // 只有三种情形值得拦：① 明确要我动手做 ② 明确在问有没有现成的 ③ 明确在问怎么做
+  if (REQUEST_PATTERNS.some((re) => re.test(instruction))) return true
+  if (MARKET_PATTERNS.some((re) => re.test(instruction))) return true
+  if (HOWTO_PATTERNS.some((re) => re.test(instruction))) return true
 
-  // 「插件/工具/方案」这类中性词，必须搭配市场语境才算在问市场
-  const hasNeutral = PAIR_TERMS.some((term) => haystack.includes(term.toLowerCase()))
-  if (!hasNeutral) return false
-  return PAIR_CONTEXT.some((context) => haystack.includes(context.toLowerCase()))
+  // 用户自定义的追加触发词（逃生口）
+  const extra = config.extraKeywords ?? []
+  return extra.some((keyword) => instruction.includes(String(keyword)))
 }
 
 const NOTICE_ZH = (strict) => `【三思而后行 · 开工前预检】

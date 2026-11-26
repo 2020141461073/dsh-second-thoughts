@@ -1,4 +1,4 @@
-import assert from 'node:assert/strict'
+﻿import assert from 'node:assert/strict'
 import test from 'node:test'
 
 import { apply } from '../index.js'
@@ -37,7 +37,7 @@ test('injects exactly one preflight notice for a build instruction', async () =>
 
 test('does not inject twice for the same instruction', async () => {
   const { handler } = mount()
-  const messages = [{ id: 'u1', role: 'user', content: '设计一个缓存层' }]
+  const messages = [{ id: 'u1', role: 'user', content: '帮我设计一个缓存层' }]
   const first = await handler({}, enter(messages))
   assert.equal(first.messages.length, 2)
 
