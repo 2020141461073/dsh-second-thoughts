@@ -1,60 +1,60 @@
 {
-    "name":  "dsh-second-thoughts",
-    "version":  "0.3.0",
-    "description":  "开工前预检 v0.3：把含糊需求写成可验收句 → 自己找源并用探针验证 → 按能力召回直到没有新候选 → 出对照表与覆盖声明 → 交付逐条对账。A preflight gate for DeepSeek Harness agents: turn vague asks into acceptance sentences, discover and probe your own sources, recall by capability until nothing new appears, then reconcile before delivery.",
-    "type":  "module",
-    "main":  "index.js",
-    "exports":  {
-                    ".":  "./index.js",
-                    "./package.json":  "./package.json"
-                },
-    "files":  [
-                  "index.js",
-                  "lib",
-                  "cordis.patch.yml",
-                  "skills",
-                  "docs",
-                  "README.md",
-                  "LICENSE"
-              ],
-    "meta":  {
-                 "title":  "三思而后行",
-                 "description":  "开工前预检：验收句 → 自拟并验证检索源 → 按能力召回 → 覆盖声明 → 交付对账。"
-             },
-    "dsh":  {
-                "bundle":  {
-                               "patch":  "./cordis.patch.yml"
-                           }
-            },
-    "engines":  {
-                    "node":  "\u003e=22"
-                },
-    "keywords":  [
-                     "dsh",
-                     "dsh-plugin",
-                     "deepseek-harness",
-                     "prior-art",
-                     "research",
-                     "workflow",
-                     "preflight",
-                     "agent",
-                     "cordis"
-                 ],
-    "author":  {
-                   "name":  "2020141461073",
-                   "email":  "3096526038@qq.com",
-                   "url":  "https://github.com/2020141461073"
-               },
-    "license":  "MIT",
-    "homepage":  "https://github.com/2020141461073/dsh-second-thoughts#readme",
-    "repository":  {
-                       "type":  "git",
-                       "url":  "git+https://github.com/2020141461073/dsh-second-thoughts.git"
-                   },
-    "bugs":  {
-                 "url":  "https://github.com/2020141461073/dsh-second-thoughts/issues"
-             },
-    "scripts":  {
-                    "test":  "node --test test/*.test.mjs"
-                }
+  "name": "dsh-second-thoughts",
+  "version": "0.4.0",
+  "description": "开工前预检 v0.4：把含糊需求写成可验收句 → 自己找源并用探针验证（0 结果换三组说法重搜）→ 按能力召回直到没有新候选 → 出对照表与覆盖声明 → 交付逐条对账。 A preflight gate for DeepSeek Harness agents: turn vague asks into acceptance sentences, discover and probe your own sources, retry with three alternative phrasings before concluding \"none exists\", recall by capability, then reconcile before delivery.",
+  "type": "module",
+  "main": "index.js",
+  "exports": {
+    ".": "./index.js",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "index.js",
+    "lib",
+    "cordis.patch.yml",
+    "skills",
+    "docs",
+    "README.md",
+    "LICENSE"
+  ],
+  "meta": {
+    "title": "三思而后行",
+    "description": "开工前预检 v0.4：验收句 → 自拟并验证检索源（0 结果换三组说法重搜）→ 按能力召回 → 覆盖声明 → 交付对账。"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "keywords": [
+    "dsh",
+    "dsh-plugin",
+    "deepseek-harness",
+    "prior-art",
+    "research",
+    "workflow",
+    "preflight",
+    "agent",
+    "cordis"
+  ],
+  "author": {
+    "name": "2020141461073",
+    "email": "3096526038@qq.com",
+    "url": "https://github.com/2020141461073"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/2020141461073/dsh-second-thoughts#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/2020141461073/dsh-second-thoughts.git"
+  },
+  "bugs": {
+    "url": "https://github.com/2020141461073/dsh-second-thoughts/issues"
+  },
+  "scripts": {
+    "test": "node --test test/*.test.mjs"
+  }
 }

@@ -30,6 +30,27 @@
  */
 
 import { randomUUID } from 'node:crypto'
+import { readFileSync } from 'node:fs'
+import { dirname, join } from 'node:path'
+import { fileURLToPath } from 'node:url'
+
+/**
+ * 内嵌技能正文。插件只装这一个包、没有额外 skill 目录时，模型也要知道该怎么做，
+ * 所以把 SKILL.md 随包带着，运行时注册进宿主技能目录。
+ */
+let SKILL_CONTENT = ''
+try {
+  const here = dirname(fileURLToPath(import.meta.url))
+  SKILL_CONTENT = readFileSync(join(here, 'skills', 'second-thoughts', 'SKILL.md'), 'utf8')
+} catch {
+  SKILL_CONTENT = ''
+}
+
+const SKILL_NAME = 'second-thoughts'
+const SKILL_DESCRIPTION =
+  '开工前的四关协议：把含糊需求写成可验收句、自拟并验证检索源、按能力项召回直到没有新候选、出覆盖声明再决定用现成的还是自建。'
+const SKILL_WHEN =
+  '用户要「做一个 / 设计 / 选型 / 移植 / 集成」某个东西，或问「有没有现成的 / 别人做过没有」时使用。'
 
 /** Plugin name shown in loader logs. */
 export const name = 'dsh-second-thoughts'
@@ -290,6 +311,28 @@ export function apply(ctx, rawConfig) {
   })
 
   logger?.info?.('[second-thoughts] armed (mode=%s, locale=%s)', config.mode, config.locale)
+
+  // 把四关协议注册成内嵌技能（skills 是可选依赖，缺它也不影响提示注入）。
+  const skills = typeof ctx.get === 'function' ? ctx.get('skills') : undefined
+  if (SKILL_CONTENT && skills && typeof skills.register === 'function') {
+    try {
+      ctx.effect(() => {
+        const dispose = skills.register({
+          name: SKILL_NAME,
+          description: SKILL_DESCRIPTION,
+          whenToUse: SKILL_WHEN,
+          source: 'runtime',
+          content: SKILL_CONTENT,
+        })
+        return () => {
+          if (typeof dispose === 'function') dispose()
+        }
+      })
+      logger?.info?.('[second-thoughts] skill registered (%d chars)', SKILL_CONTENT.length)
+    } catch (error) {
+      logger?.warn?.('[second-thoughts] skill registration failed: %s', String(error?.message ?? error))
+    }
+  }
 
   return () => {
     try {
