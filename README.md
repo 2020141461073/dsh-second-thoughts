@@ -1,5 +1,6 @@
 # 三思而后行 · dsh-second-thoughts
 
+[![Listed on dsh-plugin.org](https://dsh-plugin.org/badges/listed.svg)](https://dsh-plugin.org/zh/plugins/2020141461073/dsh-second-thoughts)
 ![license](https://img.shields.io/badge/license-MIT-green)
 ![tests](https://img.shields.io/badge/tests-18%20passed-brightgreen)
 ![dependencies](https://img.shields.io/badge/dependencies-0-blue)
